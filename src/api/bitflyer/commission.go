@@ -15,10 +15,10 @@ func (c *commissionClient) GetCommissionRate(productCode string) (*Commission, e
 		"product_code": productCode,
 	}
 
-	var commission *Commission
-	if err := c.client.doRequest(commissionRatePath, "GET", query, nil, commission); err != nil {
+	var commission Commission
+	if err := c.client.doRequest(commissionRatePath, "GET", query, nil, &commission); err != nil {
 		return nil, err
 	}
 
-	return commission, nil
+	return &commission, nil
 }

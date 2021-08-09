@@ -50,12 +50,12 @@ func (o *orderClient) SendOrder(order *OrderRequest) (*SendOrderResponse, error)
 		return nil, err
 	}
 
-	var data *SendOrderResponse
-	if err = o.client.doRequest(sendOrderPath, "POST", map[string]string{}, body, data); err != nil {
+	var data SendOrderResponse
+	if err = o.client.doRequest(sendOrderPath, "POST", map[string]string{}, body, &data); err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return &data, nil
 }
 
 func (o *orderClient) ListOrders(productCode, childOrderAcceptanceId string) ([]Order, error) {
