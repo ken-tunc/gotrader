@@ -1,5 +1,7 @@
 # gotrader
 
+[![Build and Test](https://github.com/ken-tunc/gotrader/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/ken-tunc/gotrader/actions/workflows/build-and-test.yml)
+
 A simple cryptocurrency trading bot written in golang.
 
 ## Environment variables
