@@ -20,6 +20,15 @@ func TestNewClient(t *testing.T) {
 	if client.wsTimeout != timeout {
 		t.Errorf("unexpected wsTimeout: expected=%s, actual=%s", timeout, client.wsTimeout)
 	}
+	if client.Balance == nil {
+		t.Error("Balance client is not initialized.")
+	}
+	if client.Commission == nil {
+		t.Error("Commission client is not initialized.")
+	}
+	if client.Order == nil {
+		t.Error("Order client is not initialized.")
+	}
 	if client.Realtime == nil {
 		t.Error("Realtime client is not initialized.")
 	}

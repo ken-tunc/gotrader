@@ -3,12 +3,12 @@ package main
 import (
 	"log"
 
+	gotrader "github.com/ken-tunc/gotrader/src"
+	"gorm.io/driver/sqlite"
+
 	"github.com/ken-tunc/gotrader/src/config"
 
-	gotrader "github.com/ken-tunc/gotrader/src"
-
 	"github.com/ken-tunc/gotrader/src/api/bitflyer"
-	"gorm.io/driver/sqlite"
 )
 
 func main() {

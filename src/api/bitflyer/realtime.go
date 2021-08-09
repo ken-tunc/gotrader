@@ -51,12 +51,12 @@ func (t *Ticker) DateTime() time.Time {
 	return dateTime
 }
 
-type RealtimeClient struct {
+type realtimeClient struct {
 	client *Client
 	wsConn *websocket.Conn
 }
 
-func (r *RealtimeClient) SubscribeTicker(productCode string, ch chan<- Ticker) {
+func (r *realtimeClient) SubscribeTicker(productCode string, ch chan<- Ticker) {
 	u := url.URL{Scheme: apiSchema, Host: apiHost, Path: apiPath}
 
 RETRY:
