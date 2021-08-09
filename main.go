@@ -16,7 +16,7 @@ func main() {
 
 	client := bitflyer.NewClient(c.BitflyerKey, c.BitflyerSecret, c.HttpTimeout, c.WsTimeout)
 
-	db, err := gotrader.OpenDb(sqlite.Open(c.DataSourceName), config.Config.GormConfig)
+	db, err := gotrader.OpenDb(sqlite.Open(c.DataSourceName), c.GormConfig)
 	if err != nil {
 		log.Fatalf("cannot open database: %s", err)
 	}
