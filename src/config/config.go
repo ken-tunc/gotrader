@@ -27,7 +27,11 @@ type AppConfig struct {
 	WsTimeout   time.Duration
 }
 
-var Config AppConfig
+var config AppConfig
+
+func LoadConfig() AppConfig {
+	return config
+}
 
 func init() {
 	logFile, ok := os.LookupEnv("GOTRADER_LOGFILE")
@@ -40,19 +44,19 @@ func init() {
 		initLocation(location)
 	}
 
-	Config.ProductCode = mustLoadEnvStr("GOTRADER_PRODUCT_CODE")
-	Config.TradeDuration = gotrader.CandleDuration(mustLoadEnvStr("GOTRADER_TRADE_DURATION"))
+	config.ProductCode = mustLoadEnvStr("GOTRADER_PRODUCT_CODE")
+	config.TradeDuration = gotrader.CandleDuration(mustLoadEnvStr("GOTRADER_TRADE_DURATION"))
 
-	Config.DataSourceName = loadEnvStr("GOTRADER_DSN", ":memory:")
-	Config.GormConfig = &gorm.Config{
+	config.DataSourceName = loadEnvStr("GOTRADER_DSN", ":memory:")
+	config.GormConfig = &gorm.Config{
 		Logger: logger.New(log.Default(), logger.Config{IgnoreRecordNotFoundError: true}),
 	}
 
-	Config.BitflyerKey = mustLoadEnvStr("GOTRADER_BITFLYER_KEY")
-	Config.BitflyerSecret = mustLoadEnvStr("GOTRADER_BITFLYER_SECRET")
+	config.BitflyerKey = mustLoadEnvStr("GOTRADER_BITFLYER_KEY")
+	config.BitflyerSecret = mustLoadEnvStr("GOTRADER_BITFLYER_SECRET")
 
-	Config.HttpTimeout = time.Second * time.Duration(loadEnvInt("GOTRADER_HTTP_TIMEOUT", 5))
-	Config.WsTimeout = time.Second * time.Duration(loadEnvInt("GOTRADER_WS_TIMEOUT", 10))
+	config.HttpTimeout = time.Second * time.Duration(loadEnvInt("GOTRADER_HTTP_TIMEOUT", 5))
+	config.WsTimeout = time.Second * time.Duration(loadEnvInt("GOTRADER_WS_TIMEOUT", 10))
 }
 
 func mustLoadEnvStr(key string) string {

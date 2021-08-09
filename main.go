@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	c := config.Config
+	c := config.LoadConfig()
 
 	client := bitflyer.NewClient(c.BitflyerKey, c.BitflyerSecret, c.HttpTimeout, c.WsTimeout)
 
