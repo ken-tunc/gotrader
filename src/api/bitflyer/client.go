@@ -10,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"strconv"
 	"time"
 )
 
@@ -54,27 +53,34 @@ func NewClient(key, secret string, httpTimeout, wsTimeout time.Duration) *Client
 	return client
 }
 
-func (c *Client) doRequest(path, method string, query map[string]string, body []byte, data interface{}) error {
+func (c *Client) doRequest(path, method string, query map[string][]string, private bool, payload []byte, data interface{}) error {
 	uri, err := url.Parse(path)
 	if err != nil {
 		return err
 	}
 
 	endpoint := baseUrl.ResolveReference(uri).String()
-	req, err := http.NewRequest(method, endpoint, bytes.NewBuffer(body))
+	req, err := http.NewRequest(method, endpoint, bytes.NewBuffer(payload))
 	if err != nil {
 		return err
 	}
 
-	for key, value := range c.headers(method, req.URL.RequestURI(), body) {
-		req.Header.Add(key, value)
-	}
-
 	q := req.URL.Query()
-	for key, value := range query {
-		q.Add(key, value)
+	for key, values := range query {
+		for _, value := range values {
+			q.Add(key, value)
+		}
 	}
 	req.URL.RawQuery = q.Encode()
+
+	if len(payload) != 0 {
+		req.Header.Add("Content-Type", "application/json")
+	}
+	if private {
+		for key, value := range c.authHeaders(method, req.URL.RequestURI(), payload) {
+			req.Header.Add(key, value)
+		}
+	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -93,18 +99,21 @@ func (c *Client) doRequest(path, method string, query map[string]string, body []
 	return json.Unmarshal(dataBin, data)
 }
 
-func (c *Client) headers(method, endpoint string, body []byte) map[string]string {
-	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-	msg := timestamp + method + endpoint + string(body)
+func (c *Client) authHeaders(method, requestUri string, payload []byte) map[string]string {
+	timestamp := time.Now().UTC().String()
 
 	mac := hmac.New(sha256.New, []byte(c.secret))
-	mac.Write([]byte(msg))
+	mac.Write([]byte(timestamp))
+	mac.Write([]byte(method))
+	mac.Write([]byte(requestUri))
+	if len(payload) != 0 {
+		mac.Write(payload)
+	}
 
 	sign := hex.EncodeToString(mac.Sum(nil))
 	return map[string]string{
 		"ACCESS-KEY":       c.key,
 		"ACCESS-TIMESTAMP": timestamp,
 		"ACCESS-SIGN":      sign,
-		"Content-Type":     "application/json",
 	}
 }

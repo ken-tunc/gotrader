@@ -45,29 +45,29 @@ type orderClient struct {
 }
 
 func (o *orderClient) SendOrder(order *OrderRequest) (*SendOrderResponse, error) {
-	body, err := json.Marshal(order)
+	payload, err := json.Marshal(order)
 	if err != nil {
 		return nil, err
 	}
 
-	var data SendOrderResponse
-	if err = o.client.doRequest(sendOrderPath, "POST", map[string]string{}, body, &data); err != nil {
+	res := new(SendOrderResponse)
+	if err = o.client.doRequest(sendOrderPath, "POST", map[string][]string{}, true, payload, res); err != nil {
 		return nil, err
 	}
 
-	return &data, nil
+	return res, nil
 }
 
 func (o *orderClient) ListOrders(productCode, childOrderAcceptanceId string) ([]Order, error) {
-	query := map[string]string{
-		"product_code": productCode,
+	query := map[string][]string{
+		"product_code": {productCode},
 	}
 	if childOrderAcceptanceId != "" {
-		query["child_order_acceptance_id"] = childOrderAcceptanceId
+		query["child_order_acceptance_id"] = []string{childOrderAcceptanceId}
 	}
 
 	var orders []Order
-	if err := o.client.doRequest(listOrderPath, "GET", query, nil, &orders); err != nil {
+	if err := o.client.doRequest(listOrderPath, "GET", query, true, nil, &orders); err != nil {
 		return nil, err
 	}
 

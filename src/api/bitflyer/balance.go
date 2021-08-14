@@ -14,7 +14,7 @@ type balanceClient struct {
 
 func (b *balanceClient) GetBalances() ([]Balance, error) {
 	var balances []Balance
-	if err := b.client.doRequest(balancePath, "GET", map[string]string{}, nil, &balances); err != nil {
+	if err := b.client.doRequest(balancePath, "GET", map[string][]string{}, true, nil, &balances); err != nil {
 		return nil, err
 	}
 	return balances, nil
